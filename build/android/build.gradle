@@ -26,7 +26,7 @@ android {
 	defaultConfig {
 		versionCode 20
 		versionName "${System.env.VERSION_STR}.${versionCode}"
-		minSdkVersion 14
+		minSdkVersion 16
 		targetSdkVersion 26
 		applicationId "net.minetest.minetest"
 		manifestPlaceholders = [ package: "net.minetest.minetest", project: project.name ]
