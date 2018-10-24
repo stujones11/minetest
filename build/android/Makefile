@@ -6,7 +6,7 @@ OS := $(shell uname)
 # GPROF = 1
 
 # build for build platform
-API = 14
+API = 16
 APP_PLATFORM = android-$(API)
 
 ANDR_ROOT = $(shell pwd)
@@ -33,7 +33,7 @@ TARGET_LIBDIR = armeabi-v7a
 TARGET_TOOLCHAIN = arm-linux-androideabi-
 TARGET_CFLAGS_ADDON = -mfloat-abi=softfp -mfpu=vfpv3 -O3
 TARGET_CXXFLAGS_ADDON = $(TARGET_CFLAGS_ADDON)
-TARGET_ARCH = armv7
+TARGET_ARCH = arm
 CROSS_CC = clang
 CROSS_CXX = clang++
 COMPILER_VERSION = clang
@@ -268,9 +268,10 @@ $(OGG_LIB): $(OGG_TIMESTAMP)
 	cd ${OGG_DIR};                                                             \
 	export APP_PLATFORM=${APP_PLATFORM};                                       \
 	export TARGET_ABI=${TARGET_ABI};                                           \
-	${ANDROID_NDK}/build/tools/make-standalone-toolchain.sh                    \
-		--toolchain=${TARGET_TOOLCHAIN}${COMPILER_VERSION}                     \
-		--platform=${APP_PLATFORM}                                             \
+	${ANDROID_NDK}/build/tools/make_standalone_toolchain.py                    \
+		--arch ${TARGET_ARCH}                                                  \
+		--api ${API}                                                           \
+		--stl=libc++                                                           \
 		--install-dir=$${TOOLCHAIN};                                           \
 	touch ${OGG_TIMESTAMP};                                                    \
 	touch ${OGG_TIMESTAMP_INT};                                                \
@@ -315,15 +316,15 @@ $(OPENSSL_LIB): $(OPENSSL_TIMESTAMP) $(GMP_LIB)
 	cd ${OPENSSL_DIR};                                                         \
 	ln -s ${OPENSSL_DIR} ../openssl;                                           \
 	export TOOLCHAIN=/tmp/ndk-${TARGET_HOST}-openssl;                          \
-	${ANDROID_NDK}/build/tools/make-standalone-toolchain.sh                    \
-		--toolchain=${TARGET_TOOLCHAIN}${COMPILER_VERSION}                     \
-		--platform=${APP_PLATFORM}                                             \
+	${ANDROID_NDK}/build/tools/make_standalone_toolchain.py                    \
+		--arch ${TARGET_ARCH}                                                  \
+		--api ${API}                                                           \
 		--stl=libc++                                                           \
 		--install-dir=$${TOOLCHAIN};                                           \
 	export PATH="$${TOOLCHAIN}/bin:$${PATH}";                                  \
 	export CFLAGS="$${CFLAGS} ${TARGET_CFLAGS_ADDON}";                         \
 	export LDFLAGS="$${LDFLAGS} ${TARGET_LDFLAGS_ADDON}";                      \
-	CC=${CROSS_CC} ./Configure enable-gmp no-asm -DL_ENDIAN -I${GMP_DIR}       \
+	CC=${CROSS_CC} ./Configure enable-gmp no-asm -DL_ENDIAN -I${GMP_DIR} -fPIC \
 		-L${GMP_DIR}/usr/lib android-${TARGET_ARCH} -D__ANDROID_API__=$(API);  \
 	CC=${CROSS_CC} ANDROID_DEV=/tmp/ndk-${TARGET_HOST} make depend;            \
 	CC=${CROSS_CC} ANDROID_DEV=/tmp/ndk-${TARGET_HOST} make build_libs;        \
@@ -370,9 +371,9 @@ $(LEVELDB_LIB): $(LEVELDB_TIMESTAMP)
 	cd deps/leveldb;                                                           \
 	export CROSS_PREFIX=${TARGET_TOOLCHAIN};                                   \
 	export TOOLCHAIN=/tmp/ndk-${TARGET_HOST}-leveldb;                          \
-	${ANDROID_NDK}/build/tools/make-standalone-toolchain.sh                    \
-		--toolchain=${TARGET_TOOLCHAIN}${COMPILER_VERSION}                     \
-		--platform=${APP_PLATFORM}                                             \
+	${ANDROID_NDK}/build/tools/make_standalone_toolchain.py                    \
+		--arch ${TARGET_ARCH}                                                  \
+		--api ${API}                                                           \
 		--stl=libc++                                                           \
 		--install-dir=$${TOOLCHAIN};                                           \
 	export PATH="$${TOOLCHAIN}/bin:$${PATH}";                                  \
@@ -479,9 +480,9 @@ $(ICONV_LIB) : $(ICONV_TIMESTAMP)
 	echo "changed timestamp for iconv detected building...";                   \
 	cd ${ICONV_DIR};                                                           \
 	export TOOLCHAIN=/tmp/ndk-${TARGET_HOST}-iconv;                            \
-	${ANDROID_NDK}/build/tools/make-standalone-toolchain.sh                    \
-		--toolchain=${TARGET_TOOLCHAIN}${COMPILER_VERSION}                     \
-		--platform=${APP_PLATFORM}                                             \
+	${ANDROID_NDK}/build/tools/make_standalone_toolchain.py                    \
+		--arch ${TARGET_ARCH}                                                  \
+		--api ${API}                                                           \
 		--stl=libc++                                                           \
 		--install-dir=$${TOOLCHAIN};                                           \
 	export PATH="$${TOOLCHAIN}/bin:$${PATH}";                                  \
@@ -597,9 +598,9 @@ $(CURL_LIB): $(CURL_TIMESTAMP) $(OPENSSL_LIB)
 	cd deps/curl-${CURL_VERSION};                                              \
 	export CROSS_PREFIX=${TARGET_TOOLCHAIN};                                   \
 	export TOOLCHAIN=/tmp/ndk-${TARGET_HOST}-curl;                             \
-	${ANDROID_NDK}/build/tools/make-standalone-toolchain.sh                    \
-		--toolchain=${TARGET_TOOLCHAIN}${COMPILER_VERSION}                     \
-		--platform=${APP_PLATFORM}                                             \
+	${ANDROID_NDK}/build/tools/make_standalone_toolchain.py                    \
+		--arch ${TARGET_ARCH}                                                  \
+		--api ${API}                                                           \
 		--stl=libc++                                                           \
 		--install-dir=$${TOOLCHAIN};                                           \
 	export PATH="$${TOOLCHAIN}/bin:$${PATH}";                                  \
@@ -657,9 +658,9 @@ $(GMP_LIB): $(GMP_TIMESTAMP)
 	cd deps/gmp-${GMP_VERSION};                                                \
 	export CROSS_PREFIX=${TARGET_TOOLCHAIN};                                   \
 	export TOOLCHAIN=/tmp/ndk-${TARGET_HOST}-gmp;                              \
-	${ANDROID_NDK}/build/tools/make-standalone-toolchain.sh                    \
-		--toolchain=${TARGET_TOOLCHAIN}${COMPILER_VERSION}                     \
-		--platform=${APP_PLATFORM}                                             \
+	${ANDROID_NDK}/build/tools/make_standalone_toolchain.py                    \
+		--arch ${TARGET_ARCH}                                                  \
+		--api ${API}                                                           \
 		--stl=libc++                                                           \
 		--install-dir=$${TOOLCHAIN};                                           \
 	export PATH="$${TOOLCHAIN}/bin:$${PATH}";                                  \

@@ -1,9 +1,10 @@
 buildscript {
 	repositories {
-		mavenCentral()
-		jcenter()
-		google()
-		maven { url 'https://maven.google.com' }
+        google()
+        jcenter()
+        maven {
+            url 'https://dl.google.com/dl/android/maven2'
+		}
 	}
 	dependencies {
 		classpath "com.android.tools.build:gradle:3.1.3"
@@ -21,13 +22,12 @@ apply plugin: "com.android.application"
 
 android {
 	compileSdkVersion 26
-	buildToolsVersion "26.0.3"
 
 	defaultConfig {
 		versionCode 20
 		versionName "${System.env.VERSION_STR}.${versionCode}"
 		minSdkVersion 14
-		targetSdkVersion 14
+		targetSdkVersion 26
 		applicationId "net.minetest.minetest"
 		manifestPlaceholders = [ package: "net.minetest.minetest", project: project.name ]
 		ndk {
