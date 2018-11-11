@@ -88,12 +88,12 @@ OGG_TIMESTAMP = $(OGG_DIR)timestamp
 OGG_TIMESTAMP_INT = $(ANDR_ROOT)/deps/ogg_timestamp
 OGG_URL_GIT = https://gitlab.com/minetest/libvorbis-libogg-android
 
-IRRLICHT_REVISION = 5150
 IRRLICHT_DIR = $(ANDR_ROOT)/deps/irrlicht/
 IRRLICHT_LIB = $(IRRLICHT_DIR)lib/Android/libIrrlicht.a
 IRRLICHT_TIMESTAMP = $(IRRLICHT_DIR)timestamp
 IRRLICHT_TIMESTAMP_INT = $(ANDR_ROOT)/deps/irrlicht_timestamp
-IRRLICHT_URL_SVN = https://svn.code.sf.net/p/irrlicht/code/branches/ogl-es@$(IRRLICHT_REVISION)
+IRRLICHT_URL_GIT = https://github.com/zaki/irrlicht
+IRRLICHT_COMMIT = 68480aacc77153295fc22f536d45a131e5ef78e1
 
 OPENSSL_VERSION = 1.0.2n
 OPENSSL_BASEDIR = openssl-$(OPENSSL_VERSION)
@@ -514,12 +514,12 @@ irrlicht_download :
 		echo "irrlicht sources missing, downloading...";                       \
 		mkdir -p ${ANDR_ROOT}/deps;                                            \
 		cd deps;                                                               \
-		svn co ${IRRLICHT_URL_SVN} irrlicht || exit 1;                         \
-		cd irrlicht;                                                           \
+		git clone ${IRRLICHT_URL_GIT} || exit 1;                               \
+		cd ${IRRLICHT_DIR} || exit 1;                                          \
+		mkdir -p lib/Android;                                            \
+		git checkout ${IRRLICHT_COMMIT} || exit 1;                             \
 		patch -p1 < ${ANDR_ROOT}/patches/irrlicht-touchcount.patch || exit 1;  \
 		patch -p1 < ${ANDR_ROOT}/patches/irrlicht-back_button.patch || exit 1; \
-		patch -p1 < ${ANDR_ROOT}/patches/irrlicht-texturehack.patch || exit 1; \
-		patch -p1 < ${ANDR_ROOT}/patches/irrlicht-native_activity.patch || exit 1; \
 	fi
 
 $(IRRLICHT_TIMESTAMP) : irrlicht_download
@@ -548,7 +548,7 @@ $(IRRLICHT_LIB): $(IRRLICHT_TIMESTAMP) $(FREETYPE_LIB)
 	export APP_PLATFORM=${APP_PLATFORM};                                       \
 	export TARGET_ABI=${TARGET_ABI};                                           \
 	export TARGET_CFLAGS_ADDON="${TARGET_CFLAGS_ADDON}";                       \
-	export TARGET_CXXFLAGS_ADDON="${TARGET_CXXFLAGS_ADDON}";                   \
+	export TARGET_CXXFLAGS_ADDON="${TARGET_CXXFLAGS_ADDON} -U__STRICT_ANSI__"; \
 	export COMPILER_VERSION=${COMPILER_VERSION};                               \
 	${ANDROID_NDK}/ndk-build                                                   \
 		NDK_APPLICATION_MK=${ANDR_ROOT}/jni/Deps.mk || exit 1;                 \
