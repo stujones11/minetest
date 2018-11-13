@@ -92,8 +92,8 @@ IRRLICHT_DIR = $(ANDR_ROOT)/deps/irrlicht/
 IRRLICHT_LIB = $(IRRLICHT_DIR)lib/Android/libIrrlicht.a
 IRRLICHT_TIMESTAMP = $(IRRLICHT_DIR)timestamp
 IRRLICHT_TIMESTAMP_INT = $(ANDR_ROOT)/deps/irrlicht_timestamp
-IRRLICHT_URL_GIT = https://github.com/zaki/irrlicht
-IRRLICHT_COMMIT = 68480aacc77153295fc22f536d45a131e5ef78e1
+IRRLICHT_URL_GIT = https://github.com/MoNTE48/irrlicht
+IRRLICHT_COMMIT = 5b8b895cca0cf59bffea6564dd5d6c3e80947d8d
 
 OPENSSL_VERSION = 1.0.2n
 OPENSSL_BASEDIR = openssl-$(OPENSSL_VERSION)
